@@ -43,4 +43,7 @@ public class FacultyService {
     public List<Faculty> getAll() {
         return facultyRepository.findAll();
     }
+    public List<Faculty> findByColor(String color){
+        return facultyRepository.findByColor(color);
+    }
 }
