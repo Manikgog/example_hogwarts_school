@@ -10,6 +10,7 @@ import ru.example.hogwarts_school.exception.NotFoundException;
 import ru.example.hogwarts_school.model.Student;
 import ru.example.hogwarts_school.repository.StudentRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -17,9 +18,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceMockTest {
     @Mock
-    public StudentRepository studentRepository;
+    private StudentRepository studentRepository;
     @InjectMocks
-    public StudentService studentService;
+    private StudentService studentService;
     @Test
     public void create_Test(){
         Student potter = new Student(0L, "Гарри Поттер", 12);
@@ -64,4 +65,68 @@ public class StudentServiceMockTest {
         Assertions.assertThrows(NotFoundException.class, ()->studentService.update(-1, chang));
     }
 
+    @Test
+    public void positive_delete_Test(){
+        Student potter = new Student(2L, "Гарри Поттер", 12);
+        Student chang = new Student(3L, "Чжоу Чанг", 13);
+        when(studentRepository.findById(2L)).thenReturn(Optional.of(potter));
+        Student expected = potter;
+        Assertions.assertEquals(expected, studentService.delete(2L));
+
+        when(studentRepository.findById(3L)).thenReturn(Optional.of(chang));
+        expected = chang;
+        Assertions.assertEquals(expected, studentService.delete(3L));
+    }
+
+    @Test
+    public void negative_delete_Test(){
+        when(studentRepository.findById(2L)).thenReturn(Optional.empty());
+        when(studentRepository.findById(3L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class, () -> studentService.delete(2L));
+        Assertions.assertThrows(NotFoundException.class, () -> studentService.delete(3L));
+    }
+
+    @Test
+    public void positive_get_Test(){
+        Student potter = new Student(2L, "Гарри Поттер", 12);
+        Student chang = new Student(3L, "Чжоу Чанг", 13);
+        when(studentRepository.findById(2L)).thenReturn(Optional.of(potter));
+        Assertions.assertEquals(potter, studentService.get(2L));
+
+        when(studentRepository.findById(3L)).thenReturn(Optional.of(chang));
+        Assertions.assertEquals(chang, studentService.get(3L));
+    }
+
+    @Test
+    public void negative_get_Test(){
+        Assertions.assertThrows(NotFoundException.class, () -> studentService.get(-1));
+        Assertions.assertThrows(NotFoundException.class, () -> studentService.get(-2));
+    }
+
+    @Test
+    public void positive_getAll_Test(){
+        Student potter = new Student(2L, "Гарри Поттер", 12);
+        Student chang = new Student(3L, "Чжоу Чанг", 13);
+        List<Student> listOfStudent = List.of(potter, chang);
+        when(studentRepository.findAll()).thenReturn(listOfStudent);
+
+        Assertions.assertEquals(listOfStudent, studentService.getAll());
+    }
+    @Test
+    public void findByAge_Test(){
+        Student potter = new Student(2L, "Гарри Поттер", 12);
+        Student chang = new Student(3L, "Чжоу Чанг", 13);
+        Student grandger = new Student(4L, "Гермиона Грейнджер", 12);
+        Student diggory = new Student(5L, "Седрик Диггори", 13);
+        Student wisly = new Student(6L, "Рон Уизли", 13);
+        when(studentRepository.findByAge(12)).thenReturn(List.of(potter, grandger));
+        Assertions.assertEquals(List.of(potter, grandger), studentService.findByAge(12));
+
+        when(studentRepository.findByAge(13)).thenReturn(List.of(chang, diggory, wisly));
+        Assertions.assertEquals(List.of(chang, diggory, wisly), studentService.findByAge(13));
+
+        when(studentRepository.findByAge(14)).thenReturn(List.of());
+        Assertions.assertEquals(List.of(), studentService.findByAge(14));
+    }
 }
