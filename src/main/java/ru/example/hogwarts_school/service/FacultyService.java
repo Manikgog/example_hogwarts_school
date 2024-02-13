@@ -5,7 +5,6 @@ import ru.example.hogwarts_school.exception.NotFoundException;
 import ru.example.hogwarts_school.model.Faculty;
 import ru.example.hogwarts_school.repository.FacultyRepository;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FacultyService {
@@ -17,29 +16,19 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
     public Faculty update(long id, Faculty faculty){
-        Optional<Faculty> op = facultyRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
+        get(id);
         faculty.setId(id);
         return facultyRepository.save(faculty);
     }
 
-    public void delete(long id){
-        Optional<Faculty> op = facultyRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
+    public Faculty delete(long id){
+        Faculty deleted = get(id);
         facultyRepository.deleteById(id);
+        return deleted;
     }
     public Faculty get(long id){
-        Optional<Faculty> op = facultyRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
-
     public List<Faculty> getAll() {
         return facultyRepository.findAll();
     }

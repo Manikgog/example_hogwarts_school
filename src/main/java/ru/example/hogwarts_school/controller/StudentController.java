@@ -28,10 +28,10 @@ public class StudentController {
         return studentService.update(id, student);
     }
     @DeleteMapping("{id}")  //http://localhost:8080/students/1
-    @Operation(summary = "Удаление студента")
+    @Operation(summary = "Удаление студента по идентификатору")
     public ResponseEntity<Student> delete(@PathVariable long id){
-        studentService.delete(id);
-        return ResponseEntity.ok().build();
+        Student deleted = studentService.delete(id);
+        return ResponseEntity.ok(deleted);
     }
     @GetMapping("{id}") //http://localhost:8080/students/1
     @Operation(summary = "Получение студента по идентификатору")

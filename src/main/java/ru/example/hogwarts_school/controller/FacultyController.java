@@ -29,8 +29,8 @@ public class FacultyController {
     @DeleteMapping("{id}")
     @Operation(summary = "Удаление факультета по идентификатору")
     public ResponseEntity<Faculty> delete(@PathVariable long id){
-        facultyService.delete(id);
-        return ResponseEntity.ok().build();
+        Faculty deleted = facultyService.delete(id);
+        return ResponseEntity.ok(deleted);
     }
     @GetMapping("{id}")
     @Operation(summary = "Получение факультета по идентификатору")
@@ -43,9 +43,9 @@ public class FacultyController {
     public List<Faculty> getAll(){
         return facultyService.getAll();
     }
-    @GetMapping("{color}")
+    @GetMapping
     @Operation(summary = "Получение массива факультетов с указанным цветом")
-    public List<Faculty> findByAge(@RequestParam String color){
+    public List<Faculty> findByColor(@RequestParam String color){
         return facultyService.findByColor(color);
     }
 }

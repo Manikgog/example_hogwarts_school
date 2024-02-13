@@ -21,11 +21,11 @@ public class Student {
         this.age = age;
     }
 
-    public java.lang.Long getId() {
+    public Long getId() {
         return id;
     }
 
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
