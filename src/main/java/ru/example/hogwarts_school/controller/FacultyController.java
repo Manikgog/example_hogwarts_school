@@ -4,8 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.example.hogwarts_school.exception.NotAllParametersException;
 import ru.example.hogwarts_school.model.Faculty;
+import ru.example.hogwarts_school.model.Student;
 import ru.example.hogwarts_school.service.FacultyService;
+import ru.example.hogwarts_school.service.StudentService;
+
 import java.util.List;
 
 @Tag(name = "Факультеты", description = "Эндпоинты для работы с факультетами")
@@ -13,8 +17,10 @@ import java.util.List;
 @RestController
 public class FacultyController {
     private final FacultyService facultyService;
-    public FacultyController(FacultyService facultyService) {
+    private final StudentService studentService;
+    public FacultyController(FacultyService facultyService, StudentService studentService) {
         this.facultyService = facultyService;
+        this.studentService = studentService;
     }
     @PostMapping
     @Operation(summary = "Создание факультета")
@@ -44,8 +50,20 @@ public class FacultyController {
         return facultyService.getAll();
     }
     @GetMapping
-    @Operation(summary = "Получение массива факультетов с указанным цветом")
-    public List<Faculty> findByColor(@RequestParam String color){
-        return facultyService.findByColor(color);
+    @Operation(summary = "Получение массива факультетов с указанным цветом или именем")
+    public List<Faculty> findByColor(@RequestParam(required = false) String color, @RequestParam(required = false) String name){
+        if(color != null && !color.isBlank()){
+            return facultyService.findByColor(color);
+        }
+        if(name != null && !name.isBlank()){
+            return facultyService.findByName(name);
+        }
+        throw new NotAllParametersException("color или name");
+    }
+
+    @GetMapping(path = "/faculty_id")
+    @Operation(summary = "Получение массива студентов указанного факультета")
+    public List<Student> getStudentsByFaculty(@RequestParam long faculty_id){
+        return facultyService.getStudentsOnFaculty(faculty_id, studentService);
     }
 }

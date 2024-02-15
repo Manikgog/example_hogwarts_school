@@ -116,13 +116,28 @@ public class FacultyServiceMockTest {
         Faculty puffenduy = new Faculty(2L, "Пуффендуй", "красный");
         Faculty slizerin = new Faculty(3L, "Слизерин", "зеленый");
         Faculty kogtevran = new Faculty(4L, "Когтевран", "зеленый");
-        when(facultyRepository.findByColor("зеленый")).thenReturn(List.of(slizerin, kogtevran));
+        when(facultyRepository.findByColorIgnoreCase("зеленый")).thenReturn(List.of(slizerin, kogtevran));
         Assertions.assertEquals(List.of(slizerin, kogtevran), facultyService.findByColor("зеленый"));
 
-        when(facultyRepository.findByColor("красный")).thenReturn(List.of(griffindor, puffenduy));
+        when(facultyRepository.findByColorIgnoreCase("красный")).thenReturn(List.of(griffindor, puffenduy));
         Assertions.assertEquals(List.of(griffindor, puffenduy), facultyService.findByColor("красный"));
 
-        when(facultyRepository.findByColor("белый")).thenReturn(List.of());
+        when(facultyRepository.findByColorIgnoreCase("белый")).thenReturn(List.of());
         Assertions.assertEquals(List.of(), facultyService.findByColor("белый"));
+    }
+    @Test
+    public void findByName_Test(){
+        Faculty griffindor = new Faculty(1L, "Гриффиндор", "красный");
+        Faculty puffenduy = new Faculty(2L, "Пуффендуй", "красный");
+        Faculty slizerin = new Faculty(3L, "Слизерин", "зеленый");
+        Faculty kogtevran = new Faculty(4L, "Когтевран", "зеленый");
+        when(facultyRepository.findByNameIgnoreCase("когтевран")).thenReturn(List.of(kogtevran));
+        Assertions.assertEquals(List.of(kogtevran), facultyService.findByName("когтевран"));
+
+        when(facultyRepository.findByNameIgnoreCase("пуффендуй")).thenReturn(List.of(puffenduy));
+        Assertions.assertEquals(List.of(puffenduy), facultyService.findByName("пуффендуй"));
+
+        when(facultyRepository.findByNameIgnoreCase("слизеринд")).thenReturn(List.of());
+        Assertions.assertEquals(List.of(), facultyService.findByName("слизеринд"));
     }
 }

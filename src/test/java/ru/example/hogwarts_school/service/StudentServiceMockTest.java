@@ -129,4 +129,20 @@ public class StudentServiceMockTest {
         when(studentRepository.findByAge(14)).thenReturn(List.of());
         Assertions.assertEquals(List.of(), studentService.findByAge(14));
     }
+    @Test
+    public void findByAgeBetween_Test(){
+        Student potter = new Student(2L, "Гарри Поттер", 12);
+        Student chang = new Student(3L, "Чжоу Чанг", 13);
+        Student grandger = new Student(4L, "Гермиона Грейнджер", 12);
+        Student diggory = new Student(5L, "Седрик Диггори", 13);
+        Student wisly = new Student(6L, "Рон Уизли", 13);
+        when(studentRepository.findByAgeBetween(11, 12)).thenReturn(List.of(potter, grandger));
+        Assertions.assertEquals(List.of(potter, grandger), studentService.findByAgeBetween(11, 12));
+
+        when(studentRepository.findByAgeBetween(13, 14)).thenReturn(List.of(chang, diggory, wisly));
+        Assertions.assertEquals(List.of(chang, diggory, wisly), studentService.findByAgeBetween(13, 14));
+
+        when(studentRepository.findByAgeBetween(14, 16)).thenReturn(List.of());
+        Assertions.assertEquals(List.of(), studentService.findByAgeBetween(14, 16));
+    }
 }

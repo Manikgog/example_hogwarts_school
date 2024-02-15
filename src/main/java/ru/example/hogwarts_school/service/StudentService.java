@@ -2,6 +2,7 @@ package ru.example.hogwarts_school.service;
 
 import org.springframework.stereotype.Service;
 import ru.example.hogwarts_school.exception.NotFoundException;
+import ru.example.hogwarts_school.model.Faculty;
 import ru.example.hogwarts_school.model.Student;
 import ru.example.hogwarts_school.repository.StudentRepository;
 import java.util.List;
@@ -34,6 +35,12 @@ public class StudentService {
     }
     public List<Student> findByAge(int age){
         return studentRepository.findByAge(age);
+    }
+    public List<Student> findByAgeBetween(int min, int max){
+        return studentRepository.findByAgeBetween(min, max);
+    }
+    public Faculty getFacultyByStudentId(long student_id){
+        return get(student_id).getFaculty();
     }
 
 }
