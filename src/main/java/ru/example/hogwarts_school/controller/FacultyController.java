@@ -1,39 +1,69 @@
 package ru.example.hogwarts_school.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.example.hogwarts_school.exception.NotAllParametersException;
 import ru.example.hogwarts_school.model.Faculty;
+import ru.example.hogwarts_school.model.Student;
 import ru.example.hogwarts_school.service.FacultyService;
+import ru.example.hogwarts_school.service.StudentService;
 
 import java.util.List;
 
+@Tag(name = "Факультеты", description = "Эндпоинты для работы с факультетами")
 @RequestMapping("/faculties")
 @RestController
 public class FacultyController {
     private final FacultyService facultyService;
-    public FacultyController(FacultyService facultyService) {
+    private final StudentService studentService;
+    public FacultyController(FacultyService facultyService, StudentService studentService) {
         this.facultyService = facultyService;
+        this.studentService = studentService;
     }
     @PostMapping
+    @Operation(summary = "Создание факультета")
     public Faculty create(@RequestBody Faculty faculty){
         return facultyService.create(faculty);
     }
     @PutMapping("{id}")
+    @Operation(summary = "Изменение факультета по идентификатору")
     public Faculty update(@PathVariable long id, @RequestBody Faculty faculty){
         return facultyService.update(id, faculty);
     }
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id){
-        facultyService.delete(id);
-        return ResponseEntity.ok().build();
+    @Operation(summary = "Удаление факультета по идентификатору")
+    public ResponseEntity<Faculty> delete(@PathVariable long id){
+        Faculty deleted = facultyService.delete(id);
+        return ResponseEntity.ok(deleted);
     }
     @GetMapping("{id}")
+    @Operation(summary = "Получение факультета по идентификатору")
     public Faculty get(@PathVariable long id){
         return facultyService.get(id);
     }
 
-    @GetMapping
+    @GetMapping("/all")
+    @Operation(summary = "Получение массива всех факультетов")
     public List<Faculty> getAll(){
         return facultyService.getAll();
+    }
+    @GetMapping
+    @Operation(summary = "Получение массива факультетов с указанным цветом или именем")
+    public List<Faculty> findByColor(@RequestParam(required = false) String color, @RequestParam(required = false) String name){
+        if(color != null && !color.isBlank()){
+            return facultyService.findByColor(color);
+        }
+        if(name != null && !name.isBlank()){
+            return facultyService.findByName(name);
+        }
+        throw new NotAllParametersException("color или name");
+    }
+
+    @GetMapping(path = "/faculty_id")
+    @Operation(summary = "Получение массива студентов указанного факультета")
+    public List<Student> getStudentsByFaculty(@RequestParam long faculty_id){
+        return facultyService.getStudentsOnFaculty(faculty_id, studentService);
     }
 }

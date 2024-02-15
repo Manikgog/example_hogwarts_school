@@ -2,10 +2,10 @@ package ru.example.hogwarts_school.service;
 
 import org.springframework.stereotype.Service;
 import ru.example.hogwarts_school.exception.NotFoundException;
+import ru.example.hogwarts_school.model.Faculty;
 import ru.example.hogwarts_school.model.Student;
 import ru.example.hogwarts_school.repository.StudentRepository;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -17,30 +17,30 @@ public class StudentService {
         return studentRepository.save(student);
     }
     public Student update(long id, Student student){
-        Optional<Student> op = studentRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
+        get(id);
         student.setId(id);
         return studentRepository.save(student);
     }
 
-    public void delete(long id){
-        Optional<Student> op = studentRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
+    public Student delete(long id){
+        Student deleted = get(id);
         studentRepository.deleteById(id);
+        return deleted;
     }
     public Student get(long id){
-        Optional<Student> op = studentRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new NotFoundException(id);
-        }
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
     public List<Student> getAll(){
         return studentRepository.findAll();
+    }
+    public List<Student> findByAge(int age){
+        return studentRepository.findByAge(age);
+    }
+    public List<Student> findByAgeBetween(int min, int max){
+        return studentRepository.findByAgeBetween(min, max);
+    }
+    public Faculty getFacultyByStudentId(long student_id){
+        return get(student_id).getFaculty();
     }
 
 }
