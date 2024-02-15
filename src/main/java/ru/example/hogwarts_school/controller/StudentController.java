@@ -65,7 +65,6 @@ public class StudentController {
         }
         throw new NotAllParametersException(stringOfParamName.toString());
     }
-
     @GetMapping(path = "/student_id")
     @Operation(summary = "Получение факультета студента по идентификатору студента")
     public Faculty getFacultyById(@RequestParam long student_id){
